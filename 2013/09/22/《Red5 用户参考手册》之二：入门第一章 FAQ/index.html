@@ -1,0 +1,231 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>《Red5 用户参考手册》之一：引言和新特性 | readdoc</title>
+  <meta name="author" content="readdoc">
+  
+  
+  <meta name="description" content="官方最新《Red5 用户参考手册》全套下载地址带着问题来看 FAQ 是使 FAQ 更有用处的最佳途径。无论是在什么地方，或者在评论下留下自己的问题。        缺陷和新功能的要求，可以提交给 Trac;
+        有关新功能的想法可以去邮件列表讨论;普通问题1.什么是 Red5？Red5 是一个使用 Java 写的开源的 Flash 流媒体服务器，它支持：        把视频/音频文件转化为播放流(支持 FLV 和 MP3);
+        录制客户端播放流(仅支持 FLV);        对象共享;
+        现场直播流发布;        *远程调用。2.Red5 代表什么？最初参考于星球大战，Red5 是“做不可能的事情的人”。3.有没有从 FMS 迁移到 Red5 的指南？有的：迁移指南。4.我如何创建自己的应用程序？如何创建新的 Red5 应用程序。5.配置文件是什么？请参阅：Red5 的配置文件。6.有没有相关邮件列表？有的：邮件列表。7.邮件列表格式是什么？(TODO)8.Red5 使用了哪些端口号？HTTP 端口号 5080//tomcat 或者 jetty 等 servlet 容器RTMP 端口号 1935//传统 RTMPRTMPT 端口号 8088//通过 HTTP 开通的 RTMP 隧道MRTMP 端口号 9035//用于边(edge)/源(origin)的安装proxy.source 端口号 1936//用于 debug可以在 &quot;[RED5_HOME]\conf\red5.properties&quot; 文件中对这些默认端口号进行修改。此外，大多数用户只用到了端口号 1935 和 5080。9.我能做点什么事情？我对 Red5 开源项目很感兴趣，我能为它做点什么事情呢？你可以为你想要做的贡献创建一个新的 Trac 凭证，在那里附加文件或链接。也请您确保在邮件列表注册一下。">
+  
+  <meta name="keywords" content="red5 red5用户参考手册 red5中文 流媒体服务器">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <meta property="og:title" content="《Red5 用户参考手册》之一：引言和新特性"/>
+  <meta property="og:site_name" content="readdoc"/>
+
+  <link rel="alternate" href="/atom.xml" title="readdoc" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css?v=1" media="screen" type="text/css">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+  
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-44141200-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+
+
+<body>
+  <div class="wrapper">
+    <header id="header"><div class="title">
+  <h1><a href="/">readdoc</a></h1>
+  <p><a href="/"></a></p>
+</div>
+<nav class="nav">
+  <ul>
+    
+      <li><a href="/">首页</a></li>
+    
+      <li><a href="/archives">归档</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+    <div class="content"><article class="post">
+  <header>
+    
+      <div class="icon"></div>
+    
+    
+  
+    <h1 class="title">《Red5 用户参考手册》之一：引言和新特性</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <p>官方最新《Red5 用户参考手册》全套下载地址<br>带着问题来看 FAQ 是使 FAQ 更有用处的最佳途径。无论是在什么地方，或者在评论下留下自己的问题。<br>        <em>缺陷和新功能的要求，可以提交给 Trac;
+        </em>有关新功能的想法可以去邮件列表讨论;<br>普通问题<br>1.什么是 Red5？<br>Red5 是一个使用 Java 写的开源的 Flash 流媒体服务器，它支持：<br>        <em>把视频/音频文件转化为播放流(支持 FLV 和 MP3);
+        </em>录制客户端播放流(仅支持 FLV);<br>        <em>对象共享;
+        </em>现场直播流发布;<br>        *远程调用。<br>2.Red5 代表什么？<br>最初参考于星球大战，Red5 是“做不可能的事情的人”。<br>3.有没有从 FMS 迁移到 Red5 的指南？<br>有的：迁移指南。<br>4.我如何创建自己的应用程序？<br>如何创建新的 Red5 应用程序。<br>5.配置文件是什么？<br>请参阅：Red5 的配置文件。<br>6.有没有相关邮件列表？<br>有的：邮件列表。<br>7.邮件列表格式是什么？(TODO)<br>8.Red5 使用了哪些端口号？<br>HTTP 端口号 5080//tomcat 或者 jetty 等 servlet 容器<br>RTMP 端口号 1935//传统 RTMP<br>RTMPT 端口号 8088//通过 HTTP 开通的 RTMP 隧道<br>MRTMP 端口号 9035//用于边(edge)/源(origin)的安装<br>proxy.source 端口号 1936//用于 debug<br>可以在 &quot;[RED5_HOME]\conf\red5.properties&quot; 文件中对这些默认端口号进行修改。<br>此外，大多数用户只用到了端口号 1935 和 5080。<br>9.我能做点什么事情？我对 Red5 开源项目很感兴趣，我能为它做点什么事情呢？<br>你可以为你想要做的贡献创建一个新的 Trac 凭证，在那里附加文件或链接。也请您确保在邮件列表注册一下。</p>
+<a id="more"></a>
+
+<p>10.有哪些人是 Red5 团队成员？<br>Red5 项目(red5 AT osflash.org)<br>项目经理<br>        Chris Allen (mrchrisallen AT gmail.com)<br>        John Grden (johng AT acmewebworks.com)<br>活跃成员<br>        Dominick Accattato (daccattato AT gmail.com)<br>        Steven Gong (steven.gong AT gmail.com)<br>        Paul Gregoire (mondain AT gmail.com)<br>        Thijs Triemstra (info AT collab.nl)<br>        Dan Rossi (electroteque AT gmail.com)<br>        Anton Lebedevich (mabrek AT gmail.com)<br>不活跃成员<br>        Luke Hubbard (luke AT codegent.com)<br>        Joachim Bauch (jojo AT struktur.de)<br>        Mick Herres (mickherres AT hotmail.com)<br>        Grant Davies (grant AT bluetube.com)<br>        Steven Elliott (steven.s.elliott AT gmail.com)<br>        Jokul Tian (tianxuefeng AT gmail.com)<br>        Michael Klishin (michael.s.klishin AT gmail.com)<br>        Martijn van Beek (martijn.vanbeek AT gmail.com)<br>11.有没有一些标准检查程序？(TODO)<br>文档相关问题<br>1.官方文档在哪呢？<br>用户参考手册。<br>2.我可以下载 PDF 格式的文档吗？<br>TODO<br>3.Red5 最新的 javadocs 去哪里找？<br><a href="http://api.red5.nl" target="_blank">http://api.red5.nl</a><br>配置相关问题<br>1.如何禁掉 Socket 的 443 端口策略检测(rtmps 和 https)？<br>你可以将端口号修改为大于 1024(如 8443)或者注释掉 RTMPS 部分。<br>流相关问题<br>1.我如何从自定义目录流化视频文件或者将流存储为视频文件？<br>自定义流路径。<br>2.如何检测录制的尾部？<br>请参考 API docs。<br>3.我如何录制来自 Red5 的 RTMP 流？<br>请参考 <a href="http://ptrthomas.wordpress.com/2008/04/19/how-to-record-rtmp-flash-video-streams-using-red5。" target="_blank">http://ptrthomas.wordpress.com/2008/04/19/how-to-record-rtmp-flash-video-streams-using-red5。</a><br>4.Red5 支持组播流吗？<br>应该注意的是 Flash 播放器并不支持多路广播。正因于此，没有一个媒体服务器可以找到一个传送多播到 Flash 播放器的解决方案。另外，许多网络将多播关掉致使其他播放平台(如Windows 媒体播放器)的多播并不可靠。当客户端无法接收多路媒体时那些多播的解决方案往往会退化到单播。Red5 已经有了单播的功能。另外，我们还有一个边(edge)-源(origin)的解决方案，有时也被称作流重复。<br>5.Red5 能够使用 UDP 协议进行流处理吗？<br>不能。尽管 Java 可以使用 UDP 协议来处理流，但 Flash 播放器无法接收来自 UDP 的数据。<br>编解码相关问题<br>1.Red5 支持哪些编码的编解码？<br>视频编解码：<br>        <em>ScreenVideo 
+        </em>On2 VP6<br>        <em>Sorenson H.263
+        </em>H264<br>音频编解码：<br>        <em>ADPCM
+        </em>NellyMoser<br>        <em>MP3
+        </em>Speex<br>        <em>AAC<br>2.什么是 RTMFP？它在 Red5 中何时可用？<br>RTMFP 指实时媒体流协议(Real Time Media Flow Protocol)。可以通过阅读其版本说明来了解更多。请找到这一页。<br>若要了解该协议的概念以及它是做什么用的，请阅读其 FAQ 文档。<br>Red5 并不支持 RTMFP。<br>数据库相关问题<br>1.Red5 支持哪些数据库连接？<br>Red5 基于 Java 开发。因此只要有 JDBC 驱动的任何数据库都可以被其调用。<br>2.我的 Red5 可以使用 Hibernate 吗？<br>Red5 和 Hibernate 集成示例。<br>脚本相关问题<br>1.支持哪些脚本语言？<br>JavaScript, Groovy, Beanshell, JRuby, Jython<br>2.Red5 支持 Actionscript 1 吗？<br>尚不支持。但这一领域的开发已经开始，这一概念已提而议程。<br>3.Red5 支持 Actionscript 3 吗？<br>尚不支持。但这一领域的开发已经开始，这一概念已经 Red5 团队查看。<br>对象共享相关问题<br>1.如何创建一个远程共享对象？<br>请参考：<a href="http://livedocs.adobe.com/fms/2/docs/wwhelp/wwhimpl/common/html/wwhelp.htm?context=LiveDocs_Parts&amp;file=00000607.html。" target="_blank">http://livedocs.adobe.com/fms/2/docs/wwhelp/wwhimpl/common/html/wwhelp.htm?context=LiveDocs_Parts&amp;file=00000607.html。</a><br>2.如何在远程服务器上设置一个共享对象？(TODO)<br>3.如何在使远程服务器上的共享对象具有持续性？<br>请参考：<a href="http://livedocs.adobe.com/fms/2/docs/wwhelp/wwhimpl/common/html/wwhelp.htm?context=LiveDocs_Parts&amp;file=00000607.html。" target="_blank">http://livedocs.adobe.com/fms/2/docs/wwhelp/wwhimpl/common/html/wwhelp.htm?context=LiveDocs_Parts&amp;file=00000607.html。</a><br>4.什么是远程共享对象插槽？<br>法律材料相关问题<br>1.许可信息<br>参考：<a href="http://www.opensource.org/licenses/lgpl-license.php" target="_blank">http://www.opensource.org/licenses/lgpl-license.php</a><br>更简单的介绍请参考：许可。<br>2.Red5 是否合法？<br>请阅读我们的答复：<a href="http://osflash.org/red5/fud。" target="_blank">http://osflash.org/red5/fud。</a><br>3.编解码许可(TODO)<br>4.第三方许可证(TODO)<br>Red5 WAR 版本相关问题<br>1.是否有关于 Red5 WAR 版本相关文档？<br>请阅读：部署到 Tomcat。<br>其他问题<br>1.有一个 IRC 频道吗？<br>是的：irc.freenode.net<br>非基于 IRC Flash 聊天：<a href="http://red5.newviewnetworks.com/iChatBar2/#。" target="_blank">http://red5.newviewnetworks.com/iChatBar2/#。</a><br>2.有相关论坛吗？<br>请看：<a href="http://red5server.com/forum/。" target="_blank">http://red5server.com/forum/。</a><br>3.有没有可以开始的框架？<br>请看：<a href="http://jedai.googlecode.com。" target="_blank">http://jedai.googlecode.com。</a><br>请看：<a href="http://paperworld3d.googlecode.com。" target="_blank">http://paperworld3d.googlecode.com。</a><br>4.什么是 Paperworld3D？<br>请看：<a href="http://www.paperworld3d.org。" target="_blank">http://www.paperworld3d.org。</a><br>5.什么是 Jedai？<br>请看：<a href="http://jedai.googlecode.com。" target="_blank">http://jedai.googlecode.com。</a><br>6.有免费的工具吗？(TODO)<br>7.有开发工具吗？<br>请看：<a href="http://www.red5.org/projects/red5plugin。" target="_blank">http://www.red5.org/projects/red5plugin。</a><br>8.有视频教程吗？(TODO)<br>9.网上有没有 Red5 应用相关例子？<br>以下是使用 Red5 的相关应用列表。你可以随意添加你自己的！
+        </em><a href="http://www.snappmx.com/：一个快速应用程序开发系统，支持建立RED5应用。" target="_blank">http://www.snappmx.com/：一个快速应用程序开发系统，支持建立RED5应用。</a><br>        <em><a href="http://code.google.com/p/openmeetings：Sebastian" target="_blank">http://code.google.com/p/openmeetings：Sebastian</a> Wagner 添加。
+        </em><a href="http://www.dokeos.com：Sebastian" target="_blank">http://www.dokeos.com：Sebastian</a> Wagner 添加的 videconf 模块。<br>        <em><a href="http://spreed.com。" target="_blank">http://spreed.com。</a>
+        </em><a href="http://www.videokent.com/videochat.php。" target="_blank">http://www.videokent.com/videochat.php。</a><br>        <em><a href="http://www.weekee.tv：一个由" target="_blank">http://www.weekee.tv：一个由</a> Weekee 团队开发的在线视频编辑网站。
+        </em><a href="http://www.blipback.com/：BlipBack" target="_blank">http://www.blipback.com/：BlipBack</a> 是一个视频留言小工具，你可以把它嵌入到你所拥有的任何社交网站或博客。BlipBack 让您和您的朋友们直接在您的页面上录制短小的视频评论。<br>        <em><a href="http://artemis.effectiveui.com：用户体验设计和开发公司。" target="_blank">http://artemis.effectiveui.com：用户体验设计和开发公司。</a>
+        </em><a href="http://jooce.com/：Jooce" target="_blank">http://jooce.com/：Jooce</a> 是你自己私有的在线桌面 - 具有公共文件共享功能。一个高度安全的，在线空间用以保存，查看，倾听 - 瞬间与朋友分享 - 所有你的文件、图片、音乐和视频。<br>        <em><a href="http://facebook.com/video：一个视频上传/录制/通信系统，你可以在上传页面录制视频，或者在发送给其他用户的私信里附加一个视频文件。" target="_blank">http://facebook.com/video：一个视频上传/录制/通信系统，你可以在上传页面录制视频，或者在发送给其他用户的私信里附加一个视频文件。</a>
+        </em><a href="http://www.f-ab.net/：F-ab" target="_blank">http://www.f-ab.net/：F-ab</a> 是一个为 Flash 电影制作的简单的浏览器。F-ab 有一个“FLV 电话”，一个 Flash 中的视频会议电话。嵌入 F-ab 中的 Red5 用于和远程 Flv 电话进行交互。<br>        <em><a href="http://www.streamingvideosoftware.info/：流视频聊谈软件脚本是一个基于" target="_blank">http://www.streamingvideosoftware.info/：流视频聊谈软件脚本是一个基于</a> Red5 的系统，通过它你可以构建按分钟付费或者按视频付费的聊天网站。
+        </em><a href="http://pixelquote.com：Simon" target="_blank">http://pixelquote.com：Simon</a> Kusterer 添加。<br>        <em><a href="http://nonoba.com/chris/fridge-magnets：经典的冰箱贴玩具。" target="_blank">http://nonoba.com/chris/fridge-magnets：经典的冰箱贴玩具。</a>
+        </em><a href="http://www.quarterlife.com：视频博客。" target="_blank">http://www.quarterlife.com：视频博客。</a><br>        <em><a href="http://www.avchat.net：Red5" target="_blank">http://www.avchat.net：Red5</a> Flash 音视频聊天软件。
+        </em><a href="http://www.avchat.net/fms-bandwidth-checker.php：Red5" target="_blank">http://www.avchat.net/fms-bandwidth-checker.php：Red5</a> 上传/下载和延迟测试与带宽检查。<br>        <em><a href="http://www.justepourrire-nantes.fr：Red5" target="_blank">http://www.justepourrire-nantes.fr：Red5</a> Flash 视频流。
+        </em><a href="http://www.nielsenaa.com/TV/tv.php：Red5" target="_blank">http://www.nielsenaa.com/TV/tv.php：Red5</a> Flash Php/MySql/Ajax 驱动计划，流多通道 TV - VOD。<br>        <em><a href="http://www.videoflashchat.com：VideoFlashChat" target="_blank">http://www.videoflashchat.com：VideoFlashChat</a> - 基于 Red5 的 Web 的视频聊天工具。
+        </em><a href="http://www.videogirls.biz：VideoGirls" target="_blank">http://www.videogirls.biz：VideoGirls</a> BiZ - 基于 Red5 的付费视频聊天软件。<br>        <em><a href="http://www.ligachannel.com/：意大利歌手网站。Red5" target="_blank">http://www.ligachannel.com/：意大利歌手网站。Red5</a> 用于保护的 VOD 流和音视频录制组件。
+        </em><a href="http://www.sticko.com/：视频门户网站与流行的社交网站的部件。" target="_blank">http://www.sticko.com/：视频门户网站与流行的社交网站的部件。</a><br>        <em><a href="http://www.zingaya.jp/：基于" target="_blank">http://www.zingaya.jp/：基于</a> Red5 的用于 Flash 电话的 VOIP 服务器。
+        </em><a href="http://www.gchats.com/red5chat/visichat/：基于" target="_blank">http://www.gchats.com/red5chat/visichat/：基于</a> Red 的Visi 聊天，Flash 视频和音频聊天系统。<br>        <em><a href="http://www.agileagenda.com/：AgileAgenda" target="_blank">http://www.agileagenda.com/：AgileAgenda</a> 网站使用 Red5 构建。
+        </em><a href="http://www.videoondemandsoftware.com：基于" target="_blank">http://www.videoondemandsoftware.com：基于</a> Red5 的按次/分钟支付的视频点播高清电视网站。<br>        <em><a href="http://www.videochatsoftware.org：Flash" target="_blank">http://www.videochatsoftware.org：Flash</a> Red5 视频聊天软件。
+        </em><a href="http://www.hubbabubba.com/：HubbaBubba" target="_blank">http://www.hubbabubba.com/：HubbaBubba</a> 世界。<br>        <em><a href="http://www.deltastrike.org/：DeltaStrike" target="_blank">http://www.deltastrike.org/：DeltaStrike</a> - 免费在线实时多人战略游戏。<br>10.有专业的支持吗？<br>公司列表：
+        </em>Infrared5 ([www.infrared5.com])。<br>        <em>Red5Server ( <a href="http://www.red5server.com)。" target="_blank">http://www.red5server.com)。</a><br>11.是否有托管解决方案？
+        </em>Red5Server ( <a href="http://www.red5server.com)。" target="_blank">http://www.red5server.com)。</a><br>12.有没有我可以参加的 Red5 群体？<br>Red5 group。<br>故障排除相关问题<br>1.为什么我会收到“closing due to long handshake”？<br>问题：Closing RTMPMinaConnection from [IP_ADDRESS] : 2610 to [IP_ADDRESS] (in: 3415 out 3212 ), with id 512231886 due to long handshake。<br>解决方案：你安装你要连接到的例子了没？例子按你自己的需求进行安装。请检查欢迎页面：<a href="http://localhost:5080/，可以找到可以安装例子的链接。只有你安装好了例子，你才可以运行它们。" target="_blank">http://localhost:5080/，可以找到可以安装例子的链接。只有你安装好了例子，你才可以运行它们。</a><br>注：对此我们正在进行相关改进，当例子被选中时即被安装。<br>原文链接：<a href="http://trac.red5.org/wiki/Documentation/UsersReferenceManual/GettingStarted/01-Frequently-Asked-Questions。" target="_blank">http://trac.red5.org/wiki/Documentation/UsersReferenceManual/GettingStarted/01-Frequently-Asked-Questions。</a></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  
+  <div class="tags">
+    <a href="/tags/red5/">red5</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+  <div class="ds-thread" data-title="《Red5 用户参考手册》之一：引言和新特性">
+  </div>
+</section>
+</div>
+  </div>
+  <div class="widget-wrapper">
+    <aside id="sidebar">
+  
+  
+    
+      
+      
+    
+      
+      
+
+<div class="widget tag first">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/event-loop/">event-loop</a><small>1</small></li>
+  
+    <li><a href="/tags/javascript/">javascript</a><small>1</small></li>
+  
+    <li><a href="/tags/javascript timer/">javascript timer</a><small>1</small></li>
+  
+    <li><a href="/tags/red5/">red5</a><small>3</small></li>
+  
+  </ul>
+</div>
+
+    
+      
+      
+
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/event-loop/" style="font-size: 10.00px;">event-loop</a><a href="/tags/javascript/" style="font-size: 10.00px;">javascript</a><a href="/tags/javascript timer/" style="font-size: 10.00px;">javascript timer</a><a href="/tags/red5/" style="font-size: 20.00px;">red5</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近的文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2013/09/22/hello-world/">JavaScript Event Loop 浅析</a>
+      </li>
+    
+      <li>
+        <a href="/2013/09/22/《Red5 用户参考手册》之二：入门第一章 FAQ/">《Red5 用户参考手册》之一：引言和新特性</a>
+      </li>
+    
+      <li>
+        <a href="/2013/08/29/《Red5 用户参考手册》之一：引言和新特性/">《Red5 用户参考手册》之一：引言和新特性</a>
+      </li>
+    
+      <li>
+        <a href="/2013/08/28/Red5 流处理架构设计解析/">Red5 流处理架构设计解析</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  </div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2013 <a href="/">readdoc</a>
+  
+</div>
+
+<div class="clearfix"></div></footer>
+  <script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'readdoc' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
