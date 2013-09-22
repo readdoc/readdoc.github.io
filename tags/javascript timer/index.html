@@ -4,64 +4,13 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
-  <title>JavaScript Event Loop 浅析 | readdoc</title>
+  <title>javascript timer | readdoc</title>
   <meta name="author" content="readdoc">
-  
-  <meta name="description" content="最近在学习Nodejs的过程中深入的了解了异步编程这个概念，为了更好的使用Nodejs，这些概念不可不知。在以前作为一个JavaScript用户的时候，完全是不知道它是怎么运行的，对好些概念也是“知其然不知其所以然”。  
-对于客户端的JavaScript和Nodejs来说其实差距不是很大，这回就从客户端方面来说说Event Loop这个概念吧，算是异步编程的一个切入点吧。其实jQuery的作者John Resig在几年前就写了一篇好文章How JavaScript Timers Work，来讲述timer和事件在浏览器中是怎样工作的，我也是通过这篇文章才“知其所以然”。  
-问题场景
-先来看看一段代码：  
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-&lt;a href=&quot;#&quot; id=&quot;doBtn&quot;&gt;do something&lt;/a&gt;
-&lt;div id=&quot;status&quot;&gt;&lt;/div&gt;
-&lt;script type=&quot;text/javascript&quot;&gt;
-  void function() {
-    var doBtn = document.getElementById('doBtn')
-      , status = document.getElementById('status');
-
-    doBtn.onclick = function(e) {
-      e.preventDefault();
-
-      status.innerText = 'doing...please wait...';  //开始啦
-      sleep(10000);  //模拟一个耗时较长的计算过程，10s
-      status.innerText = 'done';  //完成啦
-    };
-  }();
-
-  function sleep(ms) {
-    var start = new Date();
-    while (new Date() - start &lt;= ms) {}
-  }
-&lt;/script&gt;
-
-
-
-上面代码主要想完成一个功能：按钮被点击时———&gt;显示一个状态告知用户正在干一些事情———&gt;开始干———&gt;事情干完后状态变更为已完成。">
   
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-  <meta property="og:title" content="JavaScript Event Loop 浅析"/>
+  
   <meta property="og:site_name" content="readdoc"/>
 
   <link rel="alternate" href="/atom.xml" title="readdoc" type="application/atom+xml">
@@ -102,14 +51,19 @@
   <div class="clearfix"></div>
 </nav>
 <div class="clearfix"></div></header>
-    <div class="content"><article class="post">
+    <div class="content">
+<h2 class="archive-title tag">javascript timer</h2>
+
+
+  
+    <article class="post">
   <header>
     
       <div class="icon"></div>
     
     
   
-    <h1 class="title">JavaScript Event Loop 浅析</h1>
+    <h1 class="title"><a href="/2013/09/22/hello-world/">JavaScript Event Loop 浅析</a></h1>
   
 
   </header>
@@ -165,72 +119,31 @@
 </pre></td></tr></table></figure>
 
 
-<p>上面代码主要想完成一个功能：按钮被点击时———&gt;显示一个状态告知用户正在干一些事情———&gt;开始干———&gt;事情干完后状态变更为已完成。<br><a id="more"></a></p>
-<p>看上去没问题，应该是可以工作的，于是在浏览器运行这个页面。可是现实总是残忍的，没有符合预期效果。当点击按钮之后，浏览器就冻结了，用于显示状态的<code>div</code>并没有显示，界面上也没有“doing…”这个提示；经过<code>10s</code>之后，浏览器回过神了，代表耗时较长的计算已经结束，此时用于显示状态的<code>div</code>显示“done”。  </p>
-<p>究其原因：JavaScript引擎是单线程的。而此时还有必要再了解下浏览器内核都有哪些主要的常驻线程，才能解上面的疑惑。浏览器内核常驻线程大致包含以下：  </p>
-<ol>
-<li>浏览器GUI渲染线程</li>
-<li>JavaScript引擎线程</li>
-<li>浏览器定时触发器线程</li>
-<li>浏览器事件触发线程</li>
-<li>浏览器http异步请求线程</li>
-</ol>
-<p>而GUI渲染线程和JavaScript引擎线程是互斥的，JavaScript执行时GUI渲染线程是挂起的，页面将停止一切的解析和渲染行为。上面的3、4、5类线程也会产生不同的异步事件。看下面这张图就应该比较直观了。</p>
-<p><img src="http://img.heroicyang.com/js-event-loop.png" alt="JavaScript-Event-Loop"></p>
-<p>因为JavaScript引擎是单线程的，所以代码都是先压到队列，然后由引擎采用先进先出的方式运行。事件处理函数、timer执行函数也会排到这个队列中，然后利用一个无穷回圈，不断从队头取出函数执行，这个就是<code>Event Loop</code>。  </p>
-<p>接下来还是继续用图来说明上面的代码为什么没有达到预期效果。</p>
-<p><img src="http://img.heroicyang.com/js-event-loop-1.png" alt=""></p>
-<p>于是结果就只看到了“done”。  </p>
-<h3>怎样解决？</h3>
-<p>使用<code>setTimeout()</code>，下面是修改后的<code>onclick</code>事件处理函数：</p>
-<figure class="highlight lang-javascript"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-</pre></td><td class="code"><pre>doBtn.onclick = <span class="keyword">function</span>(e) {
-  e.preventDefault();
-
-  status.innerText = <span class="string">'doing...please wait...'</span>;  <span class="comment">//开始啦</span>
-  
-  setTimeout(<span class="keyword">function</span>() {
-    sleep(<span class="number">10000</span>);  <span class="comment">//模拟一个耗时较长的计算过程，10s</span>
-    status.innerText = <span class="string">'done'</span>;  <span class="comment">//完成啦</span>
-  }, <span class="number">0</span>);  <span class="comment">// 0ms delay</span>
-};
-</pre></td></tr></table></figure>
-
-
-<p>为什么这样就解决了呢？还是用上面的队列的图来解释。</p>
-<p><img src="http://img.heroicyang.com/js-event-loop-2.png" alt=""></p>
-
+<p>上面代码主要想完成一个功能：按钮被点击时———&gt;显示一个状态告知用户正在干一些事情———&gt;开始干———&gt;事情干完后状态变更为已完成。<br>
     
   </div>
-  <footer>
+  <footer class="end-sep">
     
       
+        <div class="alignleft">
+          <a href="/2013/09/22/hello-world/#more" class="more-link">更多内容</a>
+        </div>
       
-  
-  <div class="tags">
-    <a href="/tags/javascript/">javascript</a>, <a href="/tags/javascript timer/">javascript timer</a>, <a href="/tags/event-loop/">event-loop</a>
-  </div>
-
+      
     
     <div class="clearfix"></div>
   </footer>
 </article>
 
 
-<section id="comment">
-  <h1 class="title">留言</h1>
-  <div class="ds-thread" data-title="JavaScript Event Loop 浅析">
-  </div>
-</section>
+  
+
+  <nav id="pagination">
+  
+  
+  <div class="clearfix"></div>
+</nav>
+
 </div>
   </div>
   <div class="widget-wrapper">
