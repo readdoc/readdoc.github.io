@@ -1,0 +1,222 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>Red5 流处理架构设计解析 | readdoc</title>
+  <meta name="author" content="readdoc">
+  
+  
+  <meta name="description" content="前言流处理是 Red5 容器的一个核心。本文是一个 Red5 流处理的设计文档，来自于 Red5 团队的邮件列表，作者是 Steven Gong，起稿于 2006 年 4 月。本文的原文标题是《关于流处理架构设计的介绍》，原文可以点击这里进行查看。虽然只是一个初始的设计构想，而且有些细节还没有敲定，但通过对本文的学习，我们仍然可以深入领会到 Red5 流处理架构的运行机制。现在的最新的 Red5 的源代码，关于流处理的整体架构也是基于本文进行设计。终于涉及到 Red5 的架构设计了。虽然只是一个模块，但知识面以及个人水平所限，讲解肯定有不当、肤浅之处，有些地方讲的也很生硬，请各位大牛同学多多包涵。如果实在是看不下去了，也可以出来喷一下。
+以下是邮件正文
+大家好，最近几周的时间里我一直在思考并设计关于 Red5 的新的流处理架构。这样做的目的是使我们的流处理更加模块化，这样代码才可以更好地进行设计、实现和进行独立地测试。我在建筑设计方面做出了一些努力并尽力去找到最适合我们需要的模式。最终我找到了解决方案。我不知道这些模式是不是最好的但至少他们可以灵活而轻松地和我们遗留的流处理代码进行集成。在此我想对这个架构及其背后的设计依据做一个介绍。我们开始吧… 设计模式(Patterns)事实上这个解决方案相当简单。总之，就是消息传递(Messaging)模式加管道过滤器(Pipe-Filter)模式。在多数情况下消息传递(Messaging)模式构建在管道过滤器(Pipe-Filter)模式之上，但也只使用了管道过滤器(Pipe-Filter)模式的一部分(我会详细介绍他们是如何使用的)。我所做的就是将这些模式整合起来并为我所用。
+ 背景(Background)** 消息传递系统(Messaging Systems)将 Red5 的流处理跟一个消息传递系统相比，你会发现它们有很多类似之处：消息提供者 —&gt; 流发布者，消息消费者 —&gt; 流播放者/文件池，消息路由器 —&gt; 多汇聚节点，消息 —&gt; RTMP 消息(RTMPMessage)等等。事实上 Red5 正是一个通信服务器，它从 RTMP 供应者那里获取信息，将信息进行过滤处理后发送给 RTMP 消费者。所以消息传递系统中的很多模式都可以直接集成到我们的设计中来。在第一本书中我们可以找到这些模式：消息通道(messaging channels)、消息路由器(messaging routers)和消息转换(messaging transformer)，这些对我们都很有用。举例，        - 我们可以使用带宽滤器(Bandwidth Filter，基于消息过滤器)来控制某个特殊客户端的流量。        - 我们可以使用音频/视频过滤器(Audio/Video Filter，基于消息过滤器)来控制是否发布音频或者视频标签。        - 我们可以使用消息整合器(MessageCombiner，基于聚合器)来整合几个实时播放源，然后使用混合器(MessageMixer，基于内容过滤器)再混合音频标签，进而得到一个单视频多音频的流。        - 我们可以使用播放列表发布者(PlaylistPublisher，基于消息队列)来制作一个服务端伪在线发布流(类似于 FMS 的服务端流类)。        - 我们可以使用切换流发布者(SwitchStreamPublisher，基于消息队列)来让客户端选择他们想要实时播放的流。当然，你可能会从中找到更多有用的模型。毕竟我自己的想象力有限的很。;-)">
+  
+  <meta name="keywords" content="red5 red5用户参考手册 red5中文">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <meta property="og:title" content="Red5 流处理架构设计解析"/>
+  <meta property="og:site_name" content="readdoc"/>
+
+  <link rel="alternate" href="/atom.xml" title="readdoc" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css?v=1" media="screen" type="text/css">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+  
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-44141200-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+
+
+<body>
+  <div class="wrapper">
+    <header id="header"><div class="title">
+  <h1><a href="/">readdoc</a></h1>
+  <p><a href="/"></a></p>
+</div>
+<nav class="nav">
+  <ul>
+    
+      <li><a href="/">首页</a></li>
+    
+      <li><a href="/archives">归档</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+    <div class="content"><article class="post">
+  <header>
+    
+      <div class="icon"></div>
+    
+    
+  
+    <h1 class="title">Red5 流处理架构设计解析</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <p>前言<br>流处理是 Red5 容器的一个核心。本文是一个 Red5 流处理的设计文档，来自于 Red5 团队的邮件列表，作者是 Steven Gong，起稿于 2006 年 4 月。本文的原文标题是《关于流处理架构设计的介绍》，原文可以点击这里进行查看。<br>虽然只是一个初始的设计构想，而且有些细节还没有敲定，但通过对本文的学习，我们仍然可以深入领会到 Red5 流处理架构的运行机制。现在的最新的 Red5 的源代码，关于流处理的整体架构也是基于本文进行设计。<br>终于涉及到 Red5 的架构设计了。虽然只是一个模块，但知识面以及个人水平所限，讲解肯定有不当、肤浅之处，有些地方讲的也很生硬，请各位大牛同学多多包涵。如果实在是看不下去了，也可以出来喷一下。</p>
+<h1>以下是邮件正文</h1>
+<p>大家好，<br>最近几周的时间里我一直在思考并设计关于 Red5 的新的流处理架构。这样做的目的是使我们的流处理更加模块化，这样代码才可以更好地进行设计、实现和进行独立地测试。<br>我在建筑设计方面做出了一些努力并尽力去找到最适合我们需要的模式。最终我找到了解决方案。我不知道这些模式是不是最好的但至少他们可以灵活而轻松地和我们遗留的流处理代码进行集成。在此我想对这个架构及其背后的设计依据做一个介绍。我们开始吧…<br><em> 设计模式(Patterns)<br>事实上这个解决方案相当简单。总之，就是消息传递(Messaging)模式加管道过滤器(Pipe-Filter)模式。在多数情况下消息传递(Messaging)模式构建在管道过滤器(Pipe-Filter)模式之上，但也只使用了管道过滤器(Pipe-Filter)模式的一部分(我会详细介绍他们是如何使用的)。我所做的就是将这些模式整合起来并为我所用。
+</em> 背景(Background)<br>** 消息传递系统(Messaging Systems)<br>将 Red5 的流处理跟一个消息传递系统相比，你会发现它们有很多类似之处：消息提供者 —&gt; 流发布者，消息消费者 —&gt; 流播放者/文件池，消息路由器 —&gt; 多汇聚节点，消息 —&gt; RTMP 消息(RTMPMessage)等等。事实上 Red5 正是一个通信服务器，它从 RTMP 供应者那里获取信息，将信息进行过滤处理后发送给 RTMP 消费者。所以消息传递系统中的很多模式都可以直接集成到我们的设计中来。在第一本书中我们可以找到这些模式：消息通道(messaging channels)、消息路由器(messaging routers)和消息转换(messaging transformer)，这些对我们都很有用。举例，<br>        - 我们可以使用带宽滤器(Bandwidth Filter，基于消息过滤器)来控制某个特殊客户端的流量。<br>        - 我们可以使用音频/视频过滤器(Audio/Video Filter，基于消息过滤器)来控制是否发布音频或者视频标签。<br>        - 我们可以使用消息整合器(MessageCombiner，基于聚合器)来整合几个实时播放源，然后使用混合器(MessageMixer，基于内容过滤器)再混合音频标签，进而得到一个单视频多音频的流。<br>        - 我们可以使用播放列表发布者(PlaylistPublisher，基于消息队列)来制作一个服务端伪在线发布流(类似于 FMS 的服务端流类)。<br>        - 我们可以使用切换流发布者(SwitchStreamPublisher，基于消息队列)来让客户端选择他们想要实时播放的流。<br>当然，你可能会从中找到更多有用的模型。毕竟我自己的想象力有限的很。;-)</p>
+<a id="more"></a>
+
+<p><em>* 管道过滤器(Pipe-Filter)<br>管道过滤器(Pipe-Filter)模式有着很长的历史了。最著名的实现就是运行在 unix shell 之下的管道(pipe)。Unix 上所有的进程在同时进行并以管道(pipe)相连。供应者将流添加到标准输出设备 stdout，stdout 将其转发给输入终端的管道(pipe)，消费者从标准输出设备 stdin 得到流并将其转发给终端的输出管道(pipe)。由于这种管道(pipe)的异步性质，应该维护一个缓存来保存临时片段，当缓存满时阻止供应者，当缓存为空时阻止消费者。<br>消息传递系统也依赖于管道过滤器（Pipe-Filter）模式。当消息供给者发送消息时，将其压入管道(pipe，或者用 Messaging 模式的话说是通道 channel)。然后管道(pipe)随之将消息推送给消费者。多数情况下，消费者是基于事件驱动的。你可能会发现在 JMS 中有很多传递消息的方法。事实上，这只是一个封装内部事件驱动消费者的高层编码。<br>但这只是管道过滤器(Pipe-Filter)模式的一部分而已。一个标准的管道过滤器(Pipe-Filter)模式包含四种管道(pipe)：拉-拉(pull-pull)，拉-推(pull-push)，推-拉(push-pull)和推-推(push-push)。如果我们将它命名为 xxx-yyy，那么供给者就是 xxx 方式而消费者则是 yyy 方式。例如，Unix 系统使用的就是推-拉(push-pull)管道(pipe)而消息传递系统使用的是推-推(push-push)管道(pipe)。
+</em> Red5 消息传递架构(Red5 Messaging Framework)<br>现在让我们回到我们的项目中来。无论是消息传递系统还是类 Unix 系统都无法满足我们的需求。对于前者我们有类似于 FileSourceStream 的被动消费者，它只按照要求“发送”消息。对于后者，让每个组件都包含一个活跃的线程的做法太昂贵了。在 Red5 中，我们有时需要消费者触发消息传递，有时需要供应者触发传递，甚至有时是混合。因此我们最好使用所有四种类型的管道(pipe)来使得我们的架构更加灵活。<br>我们来看一下 Red5 通信架构的类图(MessagingFramework.png)。这些类只是根据我的个人分支(branches/dev_steveng)，而且这些类并非架构的全部只是一部分，因为许多决定还是需要大家一起来做，但架构的整体已经设计完毕。主要分为五个部分：Provider, Consumer, Pipe,  Event/Listener 和 IMessage。</p>
+<p>顾名思义，IProvider 是消息的制造者，而消息的消费者当然就是 IConsumer 了。它们都是标识接口。然后是 IPullableProvider 和 IPushableConsumer。<br>你会发现 IPipe 接口有两个自己附加的方法。它们用于管道(pipe)的事件模型。管道(pipe)充当事件源的角色，当有 provider 或者 consumer 连接到它时，注入进来的监听者将会被以一个 PipeConnectionEvent 事件通知到。使用 addPipeConnectionListener 和 removePipeConnectionListener 方法可以显式地添加/移除监听者，在默认情况下(当有新的连接时)管道(pipe)会自动通知已经连接到它并且实现了 IPipeConnectionListener 接口的 provider 或者 consumer。这一行为使得连接到管道(pipe)的终端之间的很容易实现通信。我会在下文中做详细介绍。<br>我没有定下来的是消息模型，因为这取决于我们的需求。我们需要几种类型的消息？属性是什么？这可能需要在邮件中讨论。<br>* 适配器(Adapters)<br>为了使这个框架生效，我写了几个临时适配器封装了我们遗留的流处理类，使之能够 VOD，实时流及其录制。类图(adapter.png)显示了这些适配器是如何工作在 Red5 通信架构中的。</p>
+<p><strong> 消费者(Consumers)<br>DownStreamAdapter 包装好流之后，将 RTMP 包发送给客户端。它可以工作在两种模式下，一种是拉模式另一种是推模式。在播放一个 VOD 时，它工作在拉模式，因为它主动地从管道(pipe)中获取信息所以我们称之为主动消费者。但当它播放一个实时流的时候，它工作在推模式，我们称之为被动消费者或者事件驱动消费者。
+</strong> 供应者(Providers)<br>FileStreamSourceAdapter 将 FileStreamSource 封装起来，是一个拉模式的供给者又称为被动供给者。这个很容易理解因为我们在 VOD 使用到了它。<br>LieStreamSourceAdapter 将流封装起来，是一个推模式的供给者又称为主动供给者。它在 RTMP 连接中获取 RTMP 包并将其推送给管道(pipe)。<br><strong> 消息(Message)<br>在这里我将原来的 Message 类简单地封装为 RTMPMessage 类。
+</strong> VOD,实时和录制(VOD, live and recording)<br>现在我们来看一下这些适配器是如何组织提供 VOD,实时和播放服务的。(注：我基于遗留 API 开发了这些适配器，但它们也可以比较容易地为以后的类所用)</p>
+<p>请参考图 PlayVOD.png。在 VOD 中，当客户端发起一个播放请求时，Stream 类将会使用 FileStreamSourceAdapter、DownStreamSourceAdapter 和 InMemoryPullPullPipe 创建一个管线(pipeline)。在播放时，RTMPMessage 由消费者 DownStreamSourceAdapter 获取(MINA 对它进行触发)。<br>请参考图 PublishLive.png 和 PlayLive.png。在这里 StreamManager 充当了一个为连接供给者和消费者的中心管道记账人(pipe)的角色。我画的只是先有发布然后才有播放的情形。发布者和在线播放者由 InMemoryPushPushPipe 进行连接 — LiveStreamSourceAdapter 充当了这一过程的主动的供给者而 DownStreamAdapter 则在推模式下进行连接。事实上，如果在线播放者先提出申请的话，它将会等待，直到发布者提出申请。所以我们不再需要 TemporaryStream 和 TemporaryStreamSink 两个类了。</p>
+<p>请参考图 Recording.png。除了 StreamManager 同时创建了一个 FileStreamSinkAdapter 之外这个时序图几乎跟在线发布相同。理论上，当另一个播放者提出在线播放请求时，这个时序图就会和 PlayLive.png 一样了，但这样火狐会崩溃的… :-(</p>
+<pre><code>    &gt; 通过上面的时序图，我们有理由断定本通信架构可以使我们的代码更加模块化更加灵活。</code></pre>
+<ul>
+<li>管道连接事件模型(Pipe Connection Event Model)<br>提供者和消费者是怎样进行调度的呢？比如说，当一个客户端停止播放一个 VOD 并且关掉了 DownStreamAdapter(这个关闭由流触发)，FileStreamSourceAdapter 就不在需要了。我们需要通知前者是否也需要关掉 FileStreamSourceAdapter。所以当 DownStreamAdapter 关掉并且断开与管道(pipe)的连接时，我们应该想到一个方法去通知 FileStreamSourceAdapter 或更多类似者通知想要关闭的供应者。很容易理解消费者指向供应者，就是说，DownStreamAdapter 拥有一个 FileStreamSourceAdapter 成员并且当自己关闭时通知文件源，但这会造成耦合。如果供应者和消费者之间有过滤器的话事情会变得很糟，就是说，一个 SpeedControlFilter 定位于 DownStreamAdapter 和 FileStreamAdapter 之间。<br>为了解决这一问题，我们可以引进一个事件模型。无论什么时候一个供应者或者消费者连接到管道(pipe)时，所有注入到管道(pipe)的监听者会被通知到，如果供应者和消费者也是监听者他们会被自动通知。这就是为什么我们看到在适配器的类图上所有的适配器都实现了 IPipeConnectionListener 的原因。<br>通过事件模型机制，资源释放就很容易实现，而且还松耦合。请参考图 Dispose.png，时序图表明当 DownStreamAdapter 消亡时，FileStreamSourceAdapter 也会相应地消亡。FileStreamSinkAdapter 同理。</li>
+</ul>
+<p>在这里，DownStreamAdapter 关闭并且注销(断开)了和管道(pipe)的连接。另一端的供应者(FileStreamSourceAdapter)收到通知也相应地关闭。现在让我们想像一下当有一个 SpeedControllerFilter 在二者之间时的情形。过滤器将会被通知进而自行关闭。然后 FileStreamSourceAdapter 也会被通知到。所以事件从 DownStreamAdapter 向下通过管道(pipe)传递给了 FileStreamSourceAdapter。<br><em> 日程列表(TODO list)<br><strong> 设计消息模型(Design the message model)<br>首先，我们需要确定下来所有通信类的体系。我已经将它设计成包含头和体的模型了，就像传统的 JMS 所坐的那样。我不确定这样是否可以。我们需要搜集所有的 Red5 用到的通信类型并且把它们进行建模。到目前为止我认为 RTMPMessage 和 RawByteMessage 是我们需要的。
+</strong> 管线的生命周期管理(Lifecycle management of pipeline)<br>通信框架并没有提及管线(pipeline 由管道(pipe)连接起来的供应者、消费者和过滤器)是如何创建、管理和销毁的，我们应该考虑一个灵活的方案去实现这些。比如说，管线(pipeline)可以通过一个 xml 文件进行配置(就像 cocoon 所做的那样)。管线(pipeline)可以通过一个良好设计的 API 由应用程序开发人员在运行时进行创建，这样应用程序开发人员可以决定管线(pipeline)是如何进行创建的：它是否需要一个 SpeedControlFilter，或者它将支持多点传送，或者它将需要一个基于客户端的安全管理(SecurityFilter)。应用程序开发人员也可以在自己的程序运行的时候改变管线(pipeline)，就是说，实时地替换或者移除掉一个过滤器。<br><em>* 管理管线的 API(API that manages the pipeline)<br>上面已经提到过了。
+</em></em> 流代码的重构(Refactor the streaming code)</p>
+<h1>使用适配器只是权宜之计。我们需要将遗留的流处理代码进行重构让它变的基于组件，这样子这些组件才可以自行包含、自行文档和可以进行单元测试。这样我们才可以把它们连接起来运行在我们的系统中。</h1>
+<p>原文链接：<a href="http://osflash.org/pipermail/red5devs_osflash.org/2006-April/000703.html。" target="_blank">http://osflash.org/pipermail/red5devs_osflash.org/2006-April/000703.html。</a></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  
+  <div class="tags">
+    <a href="/tags/red5/">red5</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+  <div class="ds-thread" data-title="Red5 流处理架构设计解析">
+  </div>
+</section>
+</div>
+  </div>
+  <div class="widget-wrapper">
+    <aside id="sidebar">
+  
+  
+    
+      
+      
+    
+      
+      
+
+<div class="widget tag first">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/event-loop/">event-loop</a><small>1</small></li>
+  
+    <li><a href="/tags/javascript/">javascript</a><small>1</small></li>
+  
+    <li><a href="/tags/javascript timer/">javascript timer</a><small>1</small></li>
+  
+    <li><a href="/tags/red5/">red5</a><small>2</small></li>
+  
+  </ul>
+</div>
+
+    
+      
+      
+
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/event-loop/" style="font-size: 10.00px;">event-loop</a><a href="/tags/javascript/" style="font-size: 10.00px;">javascript</a><a href="/tags/javascript timer/" style="font-size: 10.00px;">javascript timer</a><a href="/tags/red5/" style="font-size: 20.00px;">red5</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近的文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2013/09/22/Red5 流处理架构设计解析/">Red5 流处理架构设计解析</a>
+      </li>
+    
+      <li>
+        <a href="/2013/09/22/《Red5 用户参考手册》之一：引言和新特性/">《Red5 用户参考手册》之一：引言和新特性</a>
+      </li>
+    
+      <li>
+        <a href="/2013/09/22/hello-world/">JavaScript Event Loop 浅析</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  </div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2013 <a href="/">readdoc</a>
+  
+</div>
+
+<div class="clearfix"></div></footer>
+  <script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'readdoc' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
