@@ -8,10 +8,7 @@
   <meta name="author" content="readdoc">
   
   
-  <meta name="description" content="前言流处理是 Red5 容器的一个核心。本文是一个 Red5 流处理的设计文档，来自于 Red5 团队的邮件列表，作者是 Steven Gong，起稿于 2006 年 4 月。本文的原文标题是《关于流处理架构设计的介绍》，原文可以点击这里进行查看。虽然只是一个初始的设计构想，而且有些细节还没有敲定，但通过对本文的学习，我们仍然可以深入领会到 Red5 流处理架构的运行机制。现在的最新的 Red5 的源代码，关于流处理的整体架构也是基于本文进行设计。终于涉及到 Red5 的架构设计了。虽然只是一个模块，但知识面以及个人水平所限，讲解肯定有不当、肤浅之处，有些地方讲的也很生硬，请各位大牛同学多多包涵。如果实在是看不下去了，也可以出来喷一下。
-以下是邮件正文
-大家好，最近几周的时间里我一直在思考并设计关于 Red5 的新的流处理架构。这样做的目的是使我们的流处理更加模块化，这样代码才可以更好地进行设计、实现和进行独立地测试。我在建筑设计方面做出了一些努力并尽力去找到最适合我们需要的模式。最终我找到了解决方案。我不知道这些模式是不是最好的但至少他们可以灵活而轻松地和我们遗留的流处理代码进行集成。在此我想对这个架构及其背后的设计依据做一个介绍。我们开始吧… 设计模式(Patterns)事实上这个解决方案相当简单。总之，就是消息传递(Messaging)模式加管道过滤器(Pipe-Filter)模式。在多数情况下消息传递(Messaging)模式构建在管道过滤器(Pipe-Filter)模式之上，但也只使用了管道过滤器(Pipe-Filter)模式的一部分(我会详细介绍他们是如何使用的)。我所做的就是将这些模式整合起来并为我所用。
- 背景(Background)** 消息传递系统(Messaging Systems)将 Red5 的流处理跟一个消息传递系统相比，你会发现它们有很多类似之处：消息提供者 —&gt; 流发布者，消息消费者 —&gt; 流播放者/文件池，消息路由器 —&gt; 多汇聚节点，消息 —&gt; RTMP 消息(RTMPMessage)等等。事实上 Red5 正是一个通信服务器，它从 RTMP 供应者那里获取信息，将信息进行过滤处理后发送给 RTMP 消费者。所以消息传递系统中的很多模式都可以直接集成到我们的设计中来。在第一本书中我们可以找到这些模式：消息通道(messaging channels)、消息路由器(messaging routers)和消息转换(messaging transformer)，这些对我们都很有用。举例，        - 我们可以使用带宽滤器(Bandwidth Filter，基于消息过滤器)来控制某个特殊客户端的流量。        - 我们可以使用音频/视频过滤器(Audio/Video Filter，基于消息过滤器)来控制是否发布音频或者视频标签。        - 我们可以使用消息整合器(MessageCombiner，基于聚合器)来整合几个实时播放源，然后使用混合器(MessageMixer，基于内容过滤器)再混合音频标签，进而得到一个单视频多音频的流。        - 我们可以使用播放列表发布者(PlaylistPublisher，基于消息队列)来制作一个服务端伪在线发布流(类似于 FMS 的服务端流类)。        - 我们可以使用切换流发布者(SwitchStreamPublisher，基于消息队列)来让客户端选择他们想要实时播放的流。当然，你可能会从中找到更多有用的模型。毕竟我自己的想象力有限的很。;-)">
+  <meta name="description" content="中文文档 spring red5 javascript hibernate solr">
   
   <meta name="keywords" content="red5 red5用户参考手册 red5中文">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -44,7 +41,7 @@
   <div class="wrapper">
     <header id="header"><div class="title">
   <h1><a href="/">readdoc</a></h1>
-  <p><a href="/"></a></p>
+  <p><a href="/">中文文档拯救逆天的码农</a></p>
 </div>
 <nav class="nav">
   <ul>

@@ -8,56 +8,7 @@
   <meta name="author" content="readdoc">
   
   
-  <meta name="description" content="最近在学习Nodejs的过程中深入的了解了异步编程这个概念，为了更好的使用Nodejs，这些概念不可不知。在以前作为一个JavaScript用户的时候，完全是不知道它是怎么运行的，对好些概念也是“知其然不知其所以然”。  
-对于客户端的JavaScript和Nodejs来说其实差距不是很大，这回就从客户端方面来说说Event Loop这个概念吧，算是异步编程的一个切入点吧。其实jQuery的作者John Resig在几年前就写了一篇好文章How JavaScript Timers Work，来讲述timer和事件在浏览器中是怎样工作的，我也是通过这篇文章才“知其所以然”。  
-问题场景
-先来看看一段代码：  
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-&lt;a href=&quot;#&quot; id=&quot;doBtn&quot;&gt;do something&lt;/a&gt;
-&lt;div id=&quot;status&quot;&gt;&lt;/div&gt;
-&lt;script type=&quot;text/javascript&quot;&gt;
-  void function() {
-    var doBtn = document.getElementById('doBtn')
-      , status = document.getElementById('status');
-
-    doBtn.onclick = function(e) {
-      e.preventDefault();
-
-      status.innerText = 'doing...please wait...';  //开始啦
-      sleep(10000);  //模拟一个耗时较长的计算过程，10s
-      status.innerText = 'done';  //完成啦
-    };
-  }();
-
-  function sleep(ms) {
-    var start = new Date();
-    while (new Date() - start &lt;= ms) {}
-  }
-&lt;/script&gt;
-
-
-
-上面代码主要想完成一个功能：按钮被点击时———&gt;显示一个状态告知用户正在干一些事情———&gt;开始干———&gt;事情干完后状态变更为已完成。">
+  <meta name="description" content="中文文档 spring red5 javascript hibernate solr">
   
   <meta name="keywords" content="哈哈哈">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -90,7 +41,7 @@
   <div class="wrapper">
     <header id="header"><div class="title">
   <h1><a href="/">readdoc</a></h1>
-  <p><a href="/"></a></p>
+  <p><a href="/">中文文档拯救逆天的码农</a></p>
 </div>
 <nav class="nav">
   <ul>
