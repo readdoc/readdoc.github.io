@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="chrome=1">
   
-  <title>readdoc</title>
+  <title>归档：2013/8 | readdoc</title>
   <meta name="author" content="readdoc">
   
   
@@ -53,88 +53,11 @@
 </nav>
 <div class="clearfix"></div></header>
     <div class="content">
-  <article class="post">
-  <header>
-    
-      <div class="icon"></div>
-    
-    
+<h2 class="archive-title">2013/8</h2>
+
+
   
-    <h1 class="title"><a href="/2013/09/22/hello-world/">JavaScript Event Loop 浅析</a></h1>
-  
-
-  </header>
-  
-  <div class="entry">
-    
-      <p>最近在学习<code>Nodejs</code>的过程中深入的了解了<code>异步编程</code>这个概念，为了更好的使用<code>Nodejs</code>，这些概念不可不知。在以前作为一个<code>JavaScript</code>用户的时候，完全是不知道它是怎么运行的，对好些概念也是“知其然不知其所以然”。  </p>
-<p>对于客户端的<code>JavaScript</code>和<code>Nodejs</code>来说其实差距不是很大，这回就从客户端方面来说说<code>Event Loop</code>这个概念吧，算是<code>异步编程</code>的一个切入点吧。其实<code>jQuery</code>的作者John Resig在几年前就写了一篇好文章<a href="http://ejohn.org/blog/how-javascript-timers-work/" target="_blank">How JavaScript Timers Work</a>，来讲述<code>timer</code>和<code>事件</code>在浏览器中是怎样工作的，我也是通过这篇文章才“知其所以然”。  </p>
-<h3>问题场景</h3>
-<p>先来看看一段代码：  </p>
-<figure class="highlight lang-html"><table><tr><td class="gutter"><pre>1
-2
-3
-4
-5
-6
-7
-8
-9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-</pre></td><td class="code"><pre><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"#"</span> <span class="attribute">id</span>=<span class="value">"doBtn"</span>&gt;</span>do something<span class="tag">&lt;/<span class="title">a</span>&gt;</span>
-<span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"status"</span>&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span>
-<span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript">
-  <span class="keyword">void</span> <span class="keyword">function</span>() {
-    <span class="keyword">var</span> doBtn = document.getElementById(<span class="string">'doBtn'</span>)
-      , status = document.getElementById(<span class="string">'status'</span>);
-
-    doBtn.onclick = <span class="keyword">function</span>(e) {
-      e.preventDefault();
-
-      status.innerText = <span class="string">'doing...please wait...'</span>;  <span class="comment">//开始啦</span>
-      sleep(<span class="number">10000</span>);  <span class="comment">//模拟一个耗时较长的计算过程，10s</span>
-      status.innerText = <span class="string">'done'</span>;  <span class="comment">//完成啦</span>
-    };
-  }();
-
-  <span class="function"><span class="keyword">function</span> <span class="title">sleep</span><span class="params">(ms)</span> {</span>
-    <span class="keyword">var</span> start = <span class="keyword">new</span> Date();
-    <span class="keyword">while</span> (<span class="keyword">new</span> Date() - start &lt;= ms) {}
-  }
-</span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
-</pre></td></tr></table></figure>
-
-
-<p>上面代码主要想完成一个功能：按钮被点击时———&gt;显示一个状态告知用户正在干一些事情———&gt;开始干———&gt;事情干完后状态变更为已完成。<br>
-    
-  </div>
-  <footer class="end-sep">
-    
-      
-        <div class="alignleft">
-          <a href="/2013/09/22/hello-world/#more" class="more-link">更多内容</a>
-        </div>
-      
-      
-    
-    <div class="clearfix"></div>
-  </footer>
-</article>
-
-
-
-  <article class="post">
+    <article class="post">
   <header>
     
       <div class="icon"></div>
@@ -169,8 +92,8 @@
 </article>
 
 
-
-  <article class="post">
+  
+    <article class="post">
   <header>
     
       <div class="icon"></div>
@@ -205,13 +128,15 @@
 </article>
 
 
+  
 
-
-<nav id="pagination">
+  <nav id="pagination">
   
   
   <div class="clearfix"></div>
-</nav></div>
+</nav>
+
+</div>
   </div>
   <div class="widget-wrapper">
     <aside id="sidebar">
