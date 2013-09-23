@@ -1,0 +1,275 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+  <title>《Red5 用户参考手册》之三：入门第二章 配置文件 | readdoc</title>
+  <meta name="author" content="readdoc">
+  
+  
+  <meta name="description" content="readdoc提供主流技术的中文文档，这里有spring，red5，javascript，hibernate，solr，python等文档，让码农更容易阅读技术文档。">
+  
+  <meta name="keywords" content="red5 red5用户参考手册 red5中文 流媒体服务器">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+  <meta property="og:title" content="《Red5 用户参考手册》之三：入门第二章 配置文件"/>
+
+  <meta property="og:site_name" content="readdoc"/>
+
+  <link rel="alternate" href="/atom.xml" title="readdoc" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css?v=1" media="screen" type="text/css">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8/jquery.min.js"></script>
+  
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-44141200-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+</head>
+
+
+<body>
+  <div class="wrapper">
+    <header id="header"><div class="title">
+  <h1><a href="/">readdoc</a></h1>
+  <p><a href="/">中文文档拯救逆天的码农</a></p>
+</div>
+<nav class="nav">
+  <ul>
+    
+      <li><a href="/">首页</a></li>
+    
+      <li><a href="/archives">归档</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div></header>
+    <div class="content"><article class="post">
+  <header>
+    
+      <div class="icon"></div>
+    
+    
+  
+    <h1 class="title">《Red5 用户参考手册》之三：入门第二章 配置文件</h1>
+  
+
+  </header>
+  
+  <div class="entry">
+    
+      <p>Red5 安装目录下的 conf 目录<br>jetty.xml<br>HTTP 服务器和 servlet 容器的设置都是用此文件进行配置。它默认使用端口 5080 运行所有可用的接口。<br>请参考 Jetty 网页 <a href="http://jetty.mortbay.org/jetty6/" target="_blank">http://jetty.mortbay.org/jetty6/</a> 来获得有关本文件更多语法。<br>keystore<br>包含一个样本的私钥和证书，以用于安全连接。<br>log4j.properties<br>控制记录子系统的日志级别和输出处理。<br>更多有关 log4j 信息可以在其官方网站找到：<a href="http://logging.apache.org/log4j/docs/。" target="_blank">http://logging.apache.org/log4j/docs/。</a><br>realm.properties(Jetty)</p>
+<a id="more"></a>
+
+<p>这个文件定义了可以用于安全保护区的用户密码和角色。<br>格式是：<br>[html] view plaincopyprint?</p>
+<p><username>: <password>[,<rolename> …]   </p>
+<pre><code>密码可以是明文，混淆​​或校验。应该使用 org<span class="variable">.mortbay</span><span class="variable">.util</span><span class="variable">.Password</span> 生成混淆的密码或密码校验。
+tomcat-users<span class="variable">.xml</span> (Tomcat)
+这个文件定义了可以用于安全保护区的用户密码和角色。
+格式是：</code></pre>
+<p>[html] view plaincopyprint?</p>
+<user name="<username>" password="<password>" roles="[,<rolename> ...]" />  
+
+
+<pre><code>密码可以是明文，混淆​​或校验。更多不同的摘要支持或可用 realm 的实现请参考：http://tomcat<span class="preprocessor">.apache</span><span class="preprocessor">.org</span>/tomcat-<span class="number">5.5</span>-doc/realm-howto<span class="preprocessor">.html</span>。
+更多有关 Tomcat realms 信息请参考官网：http://tomcat<span class="preprocessor">.apache</span><span class="preprocessor">.org</span>/tomcat-<span class="number">5.5</span>-doc/catalina/docs/api/org/apache/catalina/realm/package-summary<span class="preprocessor">.html</span>。
+red5<span class="preprocessor">.globals</span>
+定义了 Red5 使用的默认的 global context 的配置文件的路径。
+这一文件默认定位于 /webapps/red5-default<span class="preprocessor">.xml</span>。
+red5<span class="preprocessor">.properties</span>
+本文件包含的名/值对用于配置像 RTMP 或远程的主机和基本服务的端口。
+red5<span class="preprocessor">.xml</span>
+将 context 树连接起来的主配置文件。它负责加载 red5-common<span class="preprocessor">.xml</span> 和 red5-core<span class="preprocessor">.xml</span> 并设置服务器其他一些配置。它是 Red5 需要加载的第一个文件。通过配置以下其中之一的标签来选择 J2EE 容器。
+        *Jetty</code></pre>
+<p>[html] view plaincopyprint?</p>
+<bean id="jetty6.server" class="org.red5.server.JettyLoader" init-method="init" autowire="byType" /><br><br>            *Tomcat<br>[html] view plaincopyprint?<br><bean id="tomcat.server" class="org.red5.server.TomcatLoader" init-method="init" destroy-method="shutdown"><br>… cut for brevity …<br></bean>   
+
+<pre><code>red5-<span class="filename">common.xml
+所有子 context 间共享的类在本文件中进行声明。它包含的信息涉及到对象的序列化/反序列化、要使用的网络协议的编解码器以及可用的视频编解码器。对象缓存可以在本文件中进行配置或 spring-wired。目前有四种实现：第一个是我们自行创建的(简单的字节缓冲)其他的使用 WhirlyCache 或 Ehcache。如果不需要缓存的话可以定义 NoCache 的实现：</code></pre>
+<p>[html] view plaincopyprint?</p>
+<bean id="object.cache" class="org.red5.server.cache.NoCacheImpl"/><br><br>    其他 bean 配置可以参考如下(每次只能单独使用一个)：<br>            *Red5 自己用的简单例子<br>[html] view plaincopyprint?<br><bean id="object.cache" class="org.red5.server.cache.CacheImpl" init-method="init" autowire="byType"><br><property name="maxEntries"><value>5</value></property><br></bean>   
+
+<pre><code>        *EhCache http://ehcache<span class="preprocessor">.sourceforge</span><span class="preprocessor">.net</span>/</code></pre>
+<p>[html] view plaincopyprint?</p>
+<bean id="object.cache" class="org.red5.server.cache.EhCacheImpl" init-method="init"><br><property name="diskStore" value="java.io.tmpdir" /><br><property name="memoryStoreEvictionPolicy" value="LFU" /><br><property name="cacheManagerEventListener"><null/></property><br><property name="cacheConfigs"><br>  <list><br>     <bean class="net.sf.ehcache.config.CacheConfiguration"><br>        <property name="name" value="flv.cache" /><br>        <property name="maxElementsInMemory" value="5" /><br>        <property name="eternal" value="false" /><br>        <property name="timeToIdleSeconds" value="0" /><br>        <property name="timeToLiveSeconds" value="0" /><br>        <property name="overflowToDisk" value="false" /><br>        <property name="diskPersistent" value="false" /><br>     </bean><br>  </list><br></property><br></bean>   
+
+<pre><code>        *Whirlycache https://whirlycache<span class="preprocessor">.dev</span><span class="preprocessor">.java</span><span class="preprocessor">.net</span>/</code></pre>
+<p>[html] view plaincopyprint?</p>
+&lt;bean id=“object.cache” class=“org.red5.server.cache.WhirlyCacheImpl” init-method=“init” autowire=&quot;b<br><property name="maxEntries" value="5" /><br><property name="cacheConfig"><br><bean class="com.whirlycott.cache.CacheConfiguration"><br><property name="name" value="flv.cache" /><br><property name="maxSize" value="5" /><br><!-- This policy removes cached items, biased towards least frequently used (LFU) Items --><br><property name="policy"><value>com.whirlycott.cache.policy.LFUMaintenancePolicy</value></property><br><!-- This policy removes cached items, biased towards least recently used (LRU) Items --><br><!-- property name="policy"><value>com.whirlycott.cache.policy.LRUMaintenancePolicy</value></propert   
+<!-- This policy removes cache items in the order in which they were added --><br>Configuration files used by Red5<br><!-- property name="policy"><value>com.whirlycott.cache.policy.FIFOMaintenancePolicy</value></proper   
+<!-- A predicate for filtering Collections of Items based on their expiration time --><br>&lt;!— property name=“policy”&gt;<value>com.whirlycott.cache.policy.ExpirationTimePredicate</value></prop   
+<!-- property name="backend"><value>com.whirlycott.cache.impl.ConcurrentHashMapImpl</value></propert   
+<property name="backend"><value>com.whirlycott.cache.impl.FastHashMapImpl</value></property><br></bean>   
+
+<pre><code>red5-core<span class="variable">.xml</span>
+所有可用的网络服务都在这里进行指定。默认是 RTMP 和 RTMPT。当使用 Jetty 作为 J2EE 容器时 RTMPT 服务器的设置可以在 red5-rtmpt<span class="variable">.xml</span> 中找到。RTMPT 的处理程序可以选择以下的其中之一进行配置。
+        *Jetty</code></pre>
+<p>[html] view plaincopyprint?</p>
+<bean id="rtmpt.server" class="org.red5.server.net.rtmpt.RTMPTLoader" init-method="init" autowire="bType"/><br><br>            *Tomcat<br>[html] view plaincopyprint?<br><bean id="rtmpt.server" class="org.red5.server.net.rtmpt.TomcatRTMPTLoader" init-method="init" autowire="bType"><br>… cut for brevity …<br></bean>  
+
+<pre><code>red5-rtmpt<span class="preprocessor">.xml</span>
+设置 RTMPT URL 和 servlet 之间的映射，并指定主机和端口号。默认情况下 RTMPT 主机提供的接口使用端口号 <span class="number">8088</span>。
+请参考 Jetty 网站 http://jetty<span class="preprocessor">.mortbay</span><span class="preprocessor">.org</span>/jetty6/ 来获得关于本文件的更多语法信息。
+web<span class="preprocessor">.xml</span> (Tomcat)
+默认用于 Tomcat 的 web<span class="preprocessor">.xml</span>。在本文件可以指定一个 web 应用程序在自己的 WEB_INF/ web<span class="preprocessor">.xml</span> 之前的一些设置应用。更多有关此文件的配置信息可以参考：http://tomcat<span class="preprocessor">.apache</span><span class="preprocessor">.org</span>/tomcat-<span class="number">5.5</span>-doc/jasper-howto<span class="preprocessor">.html</span><span class="preprocessor">#Configuration。</span>
+web-default<span class="preprocessor">.xml</span> (Jetty)
+默认用于 Jetty 的 web<span class="preprocessor">.xml</span> 文件。在本文件可以指定一个 web 应用程序在自己的 WEB_INF/ web<span class="preprocessor">.xml</span> 之前的一些设置应用。
+Red5 应用程序配置目录
+red5-web<span class="preprocessor">.xml</span>
+Red5 应用程序可以在此文件中进行配置。脚本实现或者 Java 应用程序可以通过 Spring bean 元素进行配置。
+        *Java 应用程序</code></pre>
+<p>[html] view plaincopyprint?</p>
+<bean id="web.handler" class="org.red5.server.webapp.oflaDemo.Application" singleton="true" /><br><br>            *Javascript / Rhino 程序<br>[html] view plaincopyprint?<br><bean id="web.handler" class="org.red5.server.script.rhino.RhinoScriptFactory"><br><constructor-arg index="0" value="classpath:applications/main.js"/><br><!-- Implemented interfaces --><br><constructor-arg index="1"><br>  <list><br>     <value>org.red5.server.api.IScopeHandler</value><br>     <value>org.red5.server.adapter.IApplication</value><br>  </list><br></constructor-arg><br><!-- Extended class --><br><constructor-arg index="2"><br>  <value>org.red5.server.adapter.ApplicationAdapter</value><br></constructor-arg><br></bean>   
+
+<pre><code>        <span class="variable">*Ruby</span> 程序</code></pre>
+<p>[html] view plaincopyprint?</p>
+<bean id="web.handler" class="org.red5.server.script.jruby.JRubyScriptFactory"><br><constructor-arg index="0" value="classpath:applications/main.rb"/><br><constructor-arg index="1"><br>  <list><br>     <value>org.red5.server.api.IScopeHandler</value><br>     <value>org.red5.server.adapter.IApplication</value><br>  </list><br></constructor-arg><br></bean>   
+
+<p>原文链接：<a href="http://trac.red5.org/wiki/Documentation/UsersReferenceManual/GettingStarted/02-Configuration-Files。" target="_blank">http://trac.red5.org/wiki/Documentation/UsersReferenceManual/GettingStarted/02-Configuration-Files。</a></p>
+
+    
+  </div>
+  <footer>
+    
+      
+      
+  
+  <div class="tags">
+    <a href="/tags/red5/">red5</a>
+  </div>
+
+    
+    <div class="clearfix"></div>
+  </footer>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+  <div class="ds-thread" data-title="《Red5 用户参考手册》之三：入门第二章 配置文件">
+  </div>
+</section>
+</div>
+  </div>
+  <div class="widget-wrapper">
+    <aside id="sidebar">
+  
+  
+    
+      
+      
+    
+      
+      
+
+<div class="widget tag first">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/event-loop/">event-loop</a><small>1</small></li>
+  
+    <li><a href="/tags/javascript/">javascript</a><small>1</small></li>
+  
+    <li><a href="/tags/javascript timer/">javascript timer</a><small>1</small></li>
+  
+    <li><a href="/tags/jenkins/">jenkins</a><small>1</small></li>
+  
+    <li><a href="/tags/red5/">red5</a><small>4</small></li>
+  
+  </ul>
+</div>
+
+    
+      
+      
+
+<div class="widget tagcloud">
+  <h3 class="title">标签云</h3>
+  <div class="entry">
+    <a href="/tags/event-loop/" style="font-size: 10.00px;">event-loop</a><a href="/tags/javascript/" style="font-size: 10.00px;">javascript</a><a href="/tags/javascript timer/" style="font-size: 10.00px;">javascript timer</a><a href="/tags/jenkins/" style="font-size: 10.00px;">jenkins</a><a href="/tags/red5/" style="font-size: 20.00px;">red5</a>
+  </div>
+</div>
+
+    
+      
+      
+
+<div class="widget recent-posts">
+  <h3 class="title">最近的文章</h3>
+  <ul class="entry">
+    
+      <li>
+        <a href="/2013/09/23/《Red5 用户参考手册》之三：入门第二章 配置文件/">《Red5 用户参考手册》之三：入门第二章 配置文件</a>
+      </li>
+    
+      <li>
+        <a href="/2013/09/22/hello-world/">JavaScript Event Loop 浅析</a>
+      </li>
+    
+      <li>
+        <a href="/2013/09/22/Jenkins入门/">jenkins入门</a>
+      </li>
+    
+      <li>
+        <a href="/2013/09/22/《Red5 用户参考手册》之二：入门第一章 FAQ/">《Red5 用户参考手册》之二：入门第一章 FAQ</a>
+      </li>
+    
+      <li>
+        <a href="/2013/08/29/《Red5 用户参考手册》之一：引言和新特性/">《Red5 用户参考手册》之一：引言和新特性</a>
+      </li>
+    
+  </ul>
+</div>
+
+    
+  
+</aside>
+<div class="clearfix"></div>
+  </div>
+  <footer id="footer"><div class="copyright">
+  
+  &copy; 2013 <a href="/">readdoc</a>
+  
+</div>
+
+<div class="clearfix"></div></footer>
+  <script src="/js/scale.fix.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = { short_name: 'readdoc' };
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';
+    ds.async = true;
+    ds.src = 'http://static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+  (function($){
+    $('.fancybox').fancybox();
+  })(jQuery);
+</script>
+
+</body>
+</html>
